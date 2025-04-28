@@ -14,8 +14,7 @@ public class LazyDecoder {
     
     public func decode<T>(_ type: T.Type = T.self,
                           from dictionary: Any,
-                          userInfo: [CodingUserInfoKey : Any]) throws -> T where T: Decodable {
-        
+                          userInfo: [CodingUserInfoKey : Any] = [:]) throws -> T where T: Decodable {
         let decoder = _Decoder(referencing: dictionary, userInfo: userInfo)
         let container = try decoder.singleValueContainer()
         return try container.decode(type)
@@ -37,22 +36,22 @@ private struct _Decoder: Decoder {
     }
     
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
-        guard let mapping = refer as? [String: any Decodable] else {
-            fatalError()
+        guard let mapping = refer as? [String: Any] else {
+            throw EncodingError.invalidValue(refer as Any, .init(codingPath: codingPath, debugDescription: "Expect Mapping Value"))
         }
         return .init(_KeyedDecodingContainer<Key>(decoder: self, wrapping: mapping))
     }
     
     func unkeyedContainer() throws -> any UnkeyedDecodingContainer {
-        guard let sequence = refer as? [any Decodable] else {
-            fatalError()
+        guard let sequence = refer as? [Any] else {
+            throw EncodingError.invalidValue(refer as Any, .init(codingPath: codingPath, debugDescription: "Expect Sequence"))
         }
         return _UnkeyedDecodingContainer(decoder: self, wrapping: sequence)
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer { return self }
     
-    func decoder(referencing node: any Decodable, `as` key: CodingKey) -> _Decoder {
+    func decoder(referencing node: Any, `as` key: CodingKey) -> _Decoder {
         return .init(referencing: node, userInfo: userInfo, codingPath: codingPath + [key])
     }
 }
@@ -63,63 +62,63 @@ extension _Decoder: SingleValueDecodingContainer {
     
     func decode(_ type: Bool.Type) throws -> Bool {
         guard let value = self.refer as? Bool else {
-            throw DecodingError.typeMismatch(Bool.self, .init(codingPath: codingPath, debugDescription: "Expect `Bool` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Bool.self, .init(codingPath: codingPath, debugDescription: "Expect `Bool` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: String.Type) throws -> String {
         guard let value = self.refer as? String else {
-            throw DecodingError.typeMismatch(String.self, .init(codingPath: codingPath, debugDescription: "Expect `String` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(String.self, .init(codingPath: codingPath, debugDescription: "Expect `String` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Double.Type) throws -> Double {
         guard let value = self.refer as? Double else {
-            throw DecodingError.typeMismatch(Double.self, .init(codingPath: codingPath, debugDescription: "Expect `Double` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Double.self, .init(codingPath: codingPath, debugDescription: "Expect `Double` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Float.Type) throws -> Float {
         guard let value = self.refer as? Float else {
-            throw DecodingError.typeMismatch(Float.self, .init(codingPath: codingPath, debugDescription: "Expect `Float` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Float.self, .init(codingPath: codingPath, debugDescription: "Expect `Float` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Int.Type) throws -> Int {
         guard let value = self.refer as? Int else {
-            throw DecodingError.typeMismatch(Int.self, .init(codingPath: codingPath, debugDescription: "Expect `Int` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int.self, .init(codingPath: codingPath, debugDescription: "Expect `Int` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Int8.Type) throws -> Int8 {
         guard let value = self.refer as? Int8 else {
-            throw DecodingError.typeMismatch(Int8.self, .init(codingPath: codingPath, debugDescription: "Expect `Int8` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int8.self, .init(codingPath: codingPath, debugDescription: "Expect `Int8` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Int16.Type) throws -> Int16 {
         guard let value = self.refer as? Int16 else {
-            throw DecodingError.typeMismatch(Int16.self, .init(codingPath: codingPath, debugDescription: "Expect `Int16` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int16.self, .init(codingPath: codingPath, debugDescription: "Expect `Int16` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Int32.Type) throws -> Int32 {
         guard let value = self.refer as? Int32 else {
-            throw DecodingError.typeMismatch(Int32.self, .init(codingPath: codingPath, debugDescription: "Expect `Int32` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int32.self, .init(codingPath: codingPath, debugDescription: "Expect `Int32` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: Int64.Type) throws -> Int64 {
         guard let value = self.refer as? Int64 else {
-            throw DecodingError.typeMismatch(Int64.self, .init(codingPath: codingPath, debugDescription: "Expect `Int64` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int64.self, .init(codingPath: codingPath, debugDescription: "Expect `Int64` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
@@ -127,42 +126,42 @@ extension _Decoder: SingleValueDecodingContainer {
     @available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *)
     func decode(_ type: Int128.Type) throws -> Int128 {
         guard let value = self.refer as? Int128 else {
-            throw DecodingError.typeMismatch(Int128.self, .init(codingPath: codingPath, debugDescription: "Expect `Int128` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(Int128.self, .init(codingPath: codingPath, debugDescription: "Expect `Int128` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: UInt.Type) throws -> UInt {
         guard let value = self.refer as? UInt else {
-            throw DecodingError.typeMismatch(UInt.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: UInt8.Type) throws -> UInt8 {
         guard let value = self.refer as? UInt8 else {
-            throw DecodingError.typeMismatch(UInt8.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt8` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt8.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt8` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: UInt16.Type) throws -> UInt16 {
         guard let value = self.refer as? UInt16 else {
-            throw DecodingError.typeMismatch(UInt16.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt16` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt16.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt16` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: UInt32.Type) throws -> UInt32 {
         guard let value = self.refer as? UInt32 else {
-            throw DecodingError.typeMismatch(UInt32.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt32` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt32.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt32` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
     
     func decode(_ type: UInt64.Type) throws -> UInt64 {
         guard let value = self.refer as? UInt64 else {
-            throw DecodingError.typeMismatch(UInt64.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt64` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt64.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt64` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
@@ -170,7 +169,7 @@ extension _Decoder: SingleValueDecodingContainer {
     @available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *)
     func decode(_ type: UInt128.Type) throws -> UInt128 {
         guard let value = self.refer as? UInt128 else {
-            throw DecodingError.typeMismatch(UInt128.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt128` but found `\(self.refer)`"))
+            throw DecodingError.typeMismatch(UInt128.self, .init(codingPath: codingPath, debugDescription: "Expect `UInt128` but found `\(self.refer ?? "nil")`"))
         }
         return value
     }
@@ -181,9 +180,9 @@ extension _Decoder: SingleValueDecodingContainer {
 private struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
     
     private let decoder: _Decoder
-    private let mapping: [String: any Decodable]
+    private let mapping: [String: Any]
     
-    init(decoder: _Decoder, wrapping mapping: [String: any Decodable]) {
+    init(decoder: _Decoder, wrapping mapping: [String: Any]) {
         self.decoder = decoder
         self.mapping = mapping
     }
@@ -217,7 +216,7 @@ private struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerPr
 
     private func decoder(for key: CodingKey) throws -> _Decoder {
         guard let value = mapping[key.stringValue] else {
-            fatalError()
+            throw DecodingError.valueNotFound(Key.self, .init(codingPath: codingPath + [key], debugDescription: ""))
         }
         
         return decoder.decoder(referencing: value, as: key)
@@ -248,9 +247,9 @@ private struct _UnkeyedDecodingContainer: UnkeyedDecodingContainer {
     
     
     private let decoder: _Decoder
-    private let sequence: [any Decodable]
+    private let sequence: [Any]
     
-    init(decoder: _Decoder, wrapping sequence: [any Decodable]) {
+    init(decoder: _Decoder, wrapping sequence: [Any]) {
         self.decoder = decoder
         self.sequence = sequence
         self.currentIndex = 0
@@ -285,7 +284,7 @@ private struct _UnkeyedDecodingContainer: UnkeyedDecodingContainer {
     // MARK: -
     
     private var currentKey: CodingKey { return _CodingKey(index: currentIndex) }
-    private var currentNode: any Decodable { return sequence[currentIndex] }
+    private var currentNode: Any { return sequence[currentIndex] }
     
     private func throwErrorIfAtEnd<T>(_ type: T.Type) throws {
         if isAtEnd { throw DecodingError.valueNotFound(type, .init(codingPath: codingPath + [currentKey], debugDescription: "Unkeyed container is at end.")) }
