@@ -10,7 +10,7 @@ import Foundation
 /// https://github.com/swiftlang/swift-foundation/blob/main/Sources/FoundationEssentials/JSON/JSONDecoder.swift
 public class LazyDecoder {
     
-    init() {}
+    public init() {}
     
     public func decode<T>(_ type: T.Type = T.self,
                           from dictionary: Any,
