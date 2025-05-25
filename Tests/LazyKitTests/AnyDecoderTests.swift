@@ -1,10 +1,10 @@
 import Testing
-@testable import WantLazy
+@testable import LazyKit
 import Foundation
 
-@Test("testLazyDecoder")
-func testLazyDecoder() async throws {
-    let decoder = LazyDecoder()
+@Test("testAnyDecoder")
+func testAnyDecoder() async throws {
+    let decoder = AnyDecoder()
     
     // Test primitive types
     do {

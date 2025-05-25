@@ -1,5 +1,5 @@
 //
-//  DicDecoder.swift
+//  AnyDecoder.swift
 //  swift-lazy
 //
 //  Created by AFuture on 2025/4/26.
@@ -8,13 +8,15 @@
 import Foundation
 
 /// https://github.com/swiftlang/swift-foundation/blob/main/Sources/FoundationEssentials/JSON/JSONDecoder.swift
-public class LazyDecoder {
+public class AnyDecoder {
     
     public init() {}
     
-    public func decode<T>(_ type: T.Type = T.self,
-                          from dictionary: Any,
-                          userInfo: [CodingUserInfoKey : Any] = [:]) throws -> T where T: Decodable {
+    public func decode<T>(
+        _ type: T.Type = T.self,
+        from dictionary: Any,
+        userInfo: [CodingUserInfoKey : Any] = [:]
+    ) throws -> T where T: Decodable {
         let decoder = _Decoder(referencing: dictionary, userInfo: userInfo)
         let container = try decoder.singleValueContainer()
         return try container.decode(type)
