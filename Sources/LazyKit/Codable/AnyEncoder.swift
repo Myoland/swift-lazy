@@ -8,6 +8,16 @@
 import Foundation
 
 public class AnyEncoder {
+        
+    public init() {}
+    
+    public func encode<T>(
+        _ value: T,
+        userInfo: [CodingUserInfoKey: Any] = [:]
+    ) throws -> Any? {
+        // [By Huanan On 2025/05/27.] TODO: Using another magic.
+        return value
+    }
     
     public func encode<T: Encodable>(
         _ value: T,
