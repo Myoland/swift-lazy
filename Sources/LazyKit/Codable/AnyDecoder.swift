@@ -8,7 +8,7 @@
 import Foundation
 
 /// https://github.com/swiftlang/swift-foundation/blob/main/Sources/FoundationEssentials/JSON/JSONDecoder.swift
-public class AnyDecoder {
+final public class AnyDecoder: Sendable {
     
     public init() {}
     
