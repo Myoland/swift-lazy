@@ -1,50 +1,51 @@
-import Testing
-@testable import LazyKit
 import Foundation
+import Testing
+
+@testable import LazyKit
 
 @Test("testAnyDecoder")
 func testAnyDecoder() async throws {
     let decoder = AnyDecoder()
-    
+
     // Test primitive types
     do {
         let value: Int = try decoder.decode(from: 12 as Decodable, userInfo: [:])
         #expect(value == 12)
     }
-    
+
     do {
         let value: String = try decoder.decode(from: "foo" as Decodable, userInfo: [:])
         #expect(value == "foo")
     }
-    
+
     // Test arrays
     do {
         let value: [Int] = try decoder.decode(from: [34, 35] as Decodable, userInfo: [:])
         #expect(value == [34, 35])
     }
-    
+
     do {
         let value: [String] = try decoder.decode(from: ["Foo", "Bar"] as Decodable, userInfo: [:])
         #expect(value == ["Foo", "Bar"])
     }
-    
+
     // Test simple dictionaries
     do {
         let value: [String: Int] = try decoder.decode(from: ["Foo": 1, "Bar": 2] as Decodable, userInfo: [:])
         #expect(value == ["Foo": 1, "Bar": 2])
     }
-    
+
     do {
         let value: [String: String] = try decoder.decode(from: ["Foo": "Tom", "Bar": "Jerry"] as Decodable, userInfo: [:])
         #expect(value == ["Foo": "Tom", "Bar": "Jerry"])
     }
-    
+
     // Test nested dictionaries
     do {
         struct Nested: Decodable {
             let outer: [String: [String: Int]]
         }
-        
+
         let value: Nested = try decoder.decode(
             from: ["outer": ["inner": ["a": 1, "b": 2]]],
             userInfo: [:]
@@ -52,7 +53,7 @@ func testAnyDecoder() async throws {
         #expect(value.outer["inner"]?["a"] == 1)
         #expect(value.outer["inner"]?["b"] == 2)
     }
-    
+
     // Test different numeric types
     do {
         struct Numbers: Decodable {
@@ -64,7 +65,7 @@ func testAnyDecoder() async throws {
             let double: Double
             let float: Float
         }
-        
+
         let value: Numbers = try decoder.decode(
             from: [
                 "int8": Int8(8),
@@ -85,30 +86,30 @@ func testAnyDecoder() async throws {
         #expect(value.double == 3.14)
         #expect(value.float == 2.71)
     }
-    
+
     // Test complex nested structure
     do {
         enum Status: String, Decodable {
             case active = "Active"
             case inactive = "Inactive"
         }
-        
+
         enum Sex: Int, Decodable {
             case boy = 1
             case girl = 2
         }
-        
+
         struct Address: Decodable {
             let street: String
             let city: String
             let zip: Int
         }
-        
+
         struct Company: Decodable {
             let name: String
             let employees: [Employee]
         }
-        
+
         struct Employee: Decodable {
             let id: Int
             let name: String
@@ -117,7 +118,7 @@ func testAnyDecoder() async throws {
             let address: Address?
             let skills: [String]
         }
-        
+
         let value: Company = try decoder.decode(
             from: [
                 "name": "Tech Corp",
@@ -145,7 +146,7 @@ func testAnyDecoder() async throws {
             ],
             userInfo: [:]
         )
-        
+
         #expect(value.name == "Tech Corp")
         #expect(value.employees.count == 2)
         #expect(value.employees[0].name == "John")
@@ -159,20 +160,20 @@ func testAnyDecoder() async throws {
         #expect(value.employees[1].address == nil)
         #expect(value.employees[1].skills == ["Python", "ML"])
     }
-    
+
     do {
         struct Person: Decodable {
             let name: String
             let age: Int
         }
-        
+
         #expect(throws: DecodingError.self) {
             _ = try decoder.decode(
                 from: ["name": "Tom"],
                 userInfo: [:]
             ) as Person
         }
-        
+
         #expect(throws: DecodingError.self) {
             _ = try decoder.decode(
                 from: ["name": "Tom", "age": "18"],

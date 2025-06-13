@@ -10,18 +10,19 @@ import AsyncHTTPClient
 
 #endif
 
+
+public protocol HttpClientAbstract {
+
+    func send(request: Request) async throws -> Response
+}
+
 extension HttpClientAbstract {
 #if canImport(NIO)
     public typealias Request = AsyncHTTPClient.HTTPClientRequest
     public typealias Response = AsyncHTTPClient.HTTPClientResponse
 #else
-    
-#endif
-}
 
-public protocol HttpClientAbstract {
-    
-    func send(request: Request) async throws -> Response
+#endif
 }
 
 #if canImport(NIO)
