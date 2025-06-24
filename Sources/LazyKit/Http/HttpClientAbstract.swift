@@ -10,9 +10,7 @@ import AsyncHTTPClient
 
 #endif
 
-
 public protocol HttpClientAbstract {
-
     func send(request: Request) async throws -> Response
 }
 

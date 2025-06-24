@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class AnyEncoder {
+public final class AnyEncoder: Sendable {
         
     public init() {}
     
@@ -16,7 +16,7 @@ public class AnyEncoder {
         userInfo: [CodingUserInfoKey: Any] = [:]
     ) throws -> Any? {
         // [By Huanan On 2025/05/27.] TODO: Using another magic.
-        return value
+        fatalError("Unsupported")
     }
     
     public func encode<T: Encodable>(
@@ -27,10 +27,21 @@ public class AnyEncoder {
         try value.encode(to: encoder)
         return encoder.node
     }
+    
+    public func encode<T: Encodable & Sendable>(
+        _ value: T,
+        userInfo: [CodingUserInfoKey: Any] = [:]
+    ) throws -> (Any & Sendable)? {
+        let encoder = _Encoder(userInfo: userInfo)
+        try value.encode(to: encoder)
+        return encoder.node
+    }
 }
 
+private typealias AnySendable = Any & Sendable
+
 private class _Encoder: Encoder {
-    var node: Any? = nil
+    var node: AnySendable? = nil
     
     let codingPath: [CodingKey]
     let userInfo: [CodingUserInfoKey: Any]
@@ -144,8 +155,8 @@ extension _Encoder: SingleValueEncodingContainer {
 }
 
 extension _Encoder {
-    var dictionary: [String: Any] {
-        get { node as? [String: Any] ?? [:]}
+    var dictionary: [String: AnySendable] {
+        get { node as? [String: AnySendable] ?? [:]}
         set { node = newValue }
     }
 }
@@ -166,7 +177,7 @@ private struct _KeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContainerPr
     
     func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         let encoder = encoder(for: key)
-        try encoder.encode(value)
+        try value.encode(to: encoder)
         self.encoder.dictionary[key.stringValue] = encoder.node
     }
     
@@ -191,8 +202,8 @@ private struct _KeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContainerPr
 }
 
 extension _Encoder {
-    var collection: [Any] {
-        get { node as? [Any] ?? [] }
+    var collection: [AnySendable] {
+        get { node as? [AnySendable] ?? [] }
         set { node = newValue }
     }
 }
@@ -233,7 +244,7 @@ private struct _UnkeyedEncodingContainer: UnkeyedEncodingContainer {
     }
     
     func encodeNil() throws {
-        encoder.collection.append(Optional<Any>.none as Any)
+        encoder.collection.append(Optional<AnySendable>.none as AnySendable)
     }
     
     func encode<T>(_ value: T) throws where T: Encodable {
@@ -241,7 +252,7 @@ private struct _UnkeyedEncodingContainer: UnkeyedEncodingContainer {
         try value.encode(to: valueEncoder)
         
         if isOptional(type: T.self) {
-            encoder.collection.append(valueEncoder.node as Any)
+            encoder.collection.append(valueEncoder.node as AnySendable)
         } else {
             encoder.collection.append(valueEncoder.node!)
         }
