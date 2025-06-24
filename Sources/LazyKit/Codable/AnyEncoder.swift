@@ -167,6 +167,7 @@ private struct _KeyedEncodingContainer<Key: CodingKey>: KeyedEncodingContainerPr
     
     init(referencing encoder: _Encoder) {
         self.encoder = encoder
+        self.encoder.node = [String: AnySendable]()
     }
     
     var codingPath: [any CodingKey] { return encoder.codingPath }
@@ -241,6 +242,7 @@ private struct _UnkeyedEncodingContainer: UnkeyedEncodingContainer {
     
     init(referencing encoder: _Encoder) {
         self.encoder = encoder
+        self.encoder.node = [AnySendable]()
     }
     
     func encodeNil() throws {
