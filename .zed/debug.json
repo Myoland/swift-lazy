@@ -1,0 +1,26 @@
+// > echo $(xcode-select -p)
+// /Applications/Xcode-16.2.0.app/Contents/Developer
+//
+// > xcrun --show-sdk-platform-path
+// /Applications/Xcode-16.2.0.app/Contents/Developer/Platforms/MacOSX.platform
+[
+  {
+    "label": "Debug Swift Test",
+    "adapter": "CodeLLDB",
+    "program": "/Applications/Xcode-16.2.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec/swift/pm/swiftpm-testing-helper",
+    "request": "launch",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "SWT_SF_SYMBOLS_ENABLED": "0",
+      "DYLD_FRAMEWORK_PATH": "/Applications/Xcode-16.2.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "DYLD_LIBRARY_PATH": ""
+    },
+    "args": [
+      "--test-bundle-path",
+      ".build/debug/swift-lazyPackageTests.xctest/Contents/MacOS/swift-lazyPackageTests",
+      "--testing-library",
+      "swift-testing",
+      "--enable-swift-testing"
+    ]
+  }
+]
