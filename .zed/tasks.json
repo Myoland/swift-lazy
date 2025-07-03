@@ -2,7 +2,6 @@
   {
     "label": "Swift Build",
     "command": "swift build --build-tests -Xswiftc -diagnostic-style=llvm",
-    "env": { "foo": "bar" },
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
     "reveal": "always",

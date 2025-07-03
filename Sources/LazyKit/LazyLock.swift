@@ -11,13 +11,15 @@ import NIOConcurrencyHelpers
 import os.lock
 #endif
 
+
+public struct LazyLockedValue<Value>: @unchecked Sendable {
+
 #if canImport(NIOConcurrencyHelpers)
-typealias LockPrimitive = NIOLockedValueBox
+    typealias LockPrimitive = NIOLockedValueBox
 #else
-typealias LockPrimitive = OSAllocatedUnfairLock
+    typealias LockPrimitive = OSAllocatedUnfairLock
 #endif
 
-public struct LazyLock<Value>: @unchecked Sendable {
     
     internal let inner: LockPrimitive<Value>
     
@@ -51,5 +53,32 @@ public struct LazyLock<Value>: @unchecked Sendable {
 #else
         self.inner.withLockUnchecked(mutate)
 #endif
+    }
+}
+
+
+public struct LazyLock: @unchecked Sendable {
+#if canImport(NIOConcurrencyHelpers)
+    typealias LockPrimitive = NIOLock
+#else
+    typealias LockPrimitive = OSAllocatedUnfairLock<()>
+#endif
+    
+    internal let inner: LockPrimitive
+
+    public init() {
+#if canImport(NIOConcurrencyHelpers)
+        self.inner = .init()
+#else
+        self.inner = .init()
+#endif
+    }
+    
+    public func lock() {
+        self.inner.lock()
+    }
+    
+    public func unlock() {
+        self.inner.unlock()
     }
 }

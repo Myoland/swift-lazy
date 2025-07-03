@@ -27,7 +27,6 @@ func testAnyEncoder() async throws {
 
     let encoder = AnyEncoder()
     let encoded = try encoder.encode(value)
-    print(encoded as Any)
 }
 
 
@@ -50,10 +49,10 @@ func testDecodeEmpty() throws {
     let json = """
     {"str":"str","int":1,"bool":true,"array":[],"dict":{},"emptyStr":null,"emptyInt":null,"emptyBool":null,"emptyArray":null,"emptyDict":null}
     """
-    
+
     let decoder = JSONDecoder()
     let model = try decoder.decode(Model.self, from: json.data(using: .utf8)!)
-    
+
     let encoder = AnyEncoder()
     let encoded = try encoder.encode(model) as? [String: Any]
     #expect(encoded?.keys.contains("array") == true)

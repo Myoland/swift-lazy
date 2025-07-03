@@ -1,7 +1,0 @@
-{
-  "dap": {
-    "CodeLLDB": {
-      "binary": "/Applications/Xcode-16.2.0.app/Contents/Developer/usr/bin/lldb-dap"
-    }
-  }
-}
