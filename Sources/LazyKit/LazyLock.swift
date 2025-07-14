@@ -39,11 +39,11 @@ public struct LazyLockedValue<Value>: @unchecked Sendable {
 #endif
     }
     
-    public func withLock<T>(_ mutate: (inout Value) throws -> T) rethrows -> T where T : Sendable {
+    public func withLock<T>(_ mutate: @Sendable (inout Value) throws -> T) rethrows -> T where T : Sendable {
 #if canImport(NIOConcurrencyHelpers)
         try self.inner.withLockedValue(mutate)
 #else
-        self.inner.withLock(mutate)
+        try self.inner.withLock(mutate)
 #endif
     }
     
@@ -51,7 +51,7 @@ public struct LazyLockedValue<Value>: @unchecked Sendable {
 #if canImport(NIOConcurrencyHelpers)
         try self.inner.withLockedValue(mutate)
 #else
-        self.inner.withLockUnchecked(mutate)
+        try self.inner.withLockUnchecked(mutate)
 #endif
     }
 }
