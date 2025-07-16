@@ -11,6 +11,7 @@ dependencies.append(contentsOf: [
     .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.8.2"),
     .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.1"),
+    .package(url: "https://github.com/AFutureD/swift-synchronization", branch: "main"),
 ])
 
 let package = Package(
@@ -26,6 +27,7 @@ let package = Package(
         .target(
             name: "LazyKit",
             dependencies: [
+                .product(name: "SynchronizationKit", package: "swift-synchronization"),
                 .product(name: "HTTPTypes", package: "swift-http-types"),
             ]
         ),

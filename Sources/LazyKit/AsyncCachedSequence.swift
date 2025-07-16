@@ -1,5 +1,5 @@
 import os.lock
-import Synchronization
+import SynchronizationKit
 
 extension AsyncSequence where Self: Sendable, Self.Element: Sendable {
     public func cached() -> AsyncCachedSequence<Self> {

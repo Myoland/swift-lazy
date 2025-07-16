@@ -9,6 +9,8 @@ import RegexBuilder
 import AsyncAlgorithms
 import LazyKit
 import OSLog
+import SynchronizationKit
+
 
 public struct ServerSentEvent: Sendable {
     public let id: String?
