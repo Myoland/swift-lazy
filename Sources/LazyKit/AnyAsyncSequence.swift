@@ -5,10 +5,12 @@
 //  Created by AFuture on 2025/5/25.
 //
 
-public struct AnyAsyncSequence<Element>: Sendable, AsyncSequence {
+import SynchronizationKit
+
+public struct AnyAsyncSequence<Element: Sendable>: Sendable, AsyncSequence {
     public typealias AsyncIteratorNextCallback = () async throws -> Element?
 
-    public struct AsyncIterator: AsyncIteratorProtocol {
+    public struct AsyncIterator: AsyncIteratorProtocol, @unchecked Sendable {
         let nextCallback: AsyncIteratorNextCallback
 
         init(nextCallback: @escaping AsyncIteratorNextCallback) {
