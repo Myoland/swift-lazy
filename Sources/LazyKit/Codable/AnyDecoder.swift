@@ -53,7 +53,7 @@ private struct _Decoder: Decoder {
     
     func singleValueContainer() throws -> SingleValueDecodingContainer { return self }
     
-    func decoder(referencing node: Any, `as` key: CodingKey) -> _Decoder {
+    func decoder(referencing node: Any?, `as` key: CodingKey) -> _Decoder {
         return .init(referencing: node, userInfo: userInfo, codingPath: codingPath + [key])
     }
 }
@@ -217,11 +217,11 @@ private struct _KeyedDecodingContainer<Key: CodingKey>: KeyedDecodingContainerPr
     func superDecoder(forKey key: Key) throws -> Decoder { try decoder(for: key) }
 
     private func decoder(for key: CodingKey) throws -> _Decoder {
-        guard let value = mapping[key.stringValue] else {
-            throw DecodingError.valueNotFound(Key.self, .init(codingPath: codingPath + [key], debugDescription: ""))
+        if let value = mapping[key.stringValue] {
+            return decoder.decoder(referencing: value, as: key)
+        } else {
+            return decoder.decoder(referencing: nil, as: key)
         }
-        
-        return decoder.decoder(referencing: value, as: key)
     }
 }
 

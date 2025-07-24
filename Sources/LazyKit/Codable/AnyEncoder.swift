@@ -31,7 +31,7 @@ public final class AnyEncoder: Sendable {
     public func encode<T: Encodable & Sendable>(
         _ value: T,
         userInfo: [CodingUserInfoKey: Any] = [:]
-    ) throws -> (Any & Sendable)? {
+    ) throws -> Any & Sendable {
         let encoder = _Encoder(userInfo: userInfo)
         try value.encode(to: encoder)
         return encoder.node
