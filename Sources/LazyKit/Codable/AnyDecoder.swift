@@ -77,10 +77,19 @@ extension _Decoder: SingleValueDecodingContainer {
     }
     
     func decode(_ type: Double.Type) throws -> Double {
-        guard let value = self.refer as? Double else {
-            throw DecodingError.typeMismatch(Double.self, .init(codingPath: codingPath, debugDescription: "Expect `Double` but found `\(self.refer ?? "nil")`"))
+        if let value = self.refer as? Double {
+            return value
         }
-        return value
+        
+        if let value = self.refer as? (any BinaryInteger) {
+            return Double(value)
+        }
+        
+        if let str = self.refer as? (any StringProtocol), let value = Double(str) {
+            return value
+        }
+        
+        throw DecodingError.typeMismatch(Double.self, .init(codingPath: codingPath, debugDescription: "Expect `Double` but found `\(self.refer ?? "nil")`"))
     }
     
     func decode(_ type: Float.Type) throws -> Float {
