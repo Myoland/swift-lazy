@@ -12,6 +12,7 @@ dependencies.append(contentsOf: [
     .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
     .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.1"),
     .package(url: "https://github.com/AFutureD/swift-synchronization", branch: "main"),
+    .package(url: "https://github.com/apple/swift-log", from: "1.6.0"),
 ])
 
 let package = Package(
@@ -37,6 +38,7 @@ let package = Package(
                 "LazyKit",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+                .product(name: "Logging", package: "swift-log"),
             ]
         ),
         .target(

@@ -8,7 +8,7 @@ import Foundation
 import RegexBuilder
 import AsyncAlgorithms
 import LazyKit
-import OSLog
+import Logging
 import SynchronizationKit
 
 enum ASCII {
@@ -46,7 +46,7 @@ public extension ServerSentEvent {
 public final class ServerSentEventsInterpreter: Sendable {
 
     private let clientLastEventId: LazyLockedValue<String?> = .init(nil)
-    public let logger: Logger = .init(subsystem: "me.afuture.server.sse", category: "interpreter")
+    public let logger: Logger = .init(label: "me.afuture.server.sse")
 
     private let fields: LazyLockedValue<[String: String]> = .init([:])
     
