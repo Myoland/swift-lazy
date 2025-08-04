@@ -1,4 +1,3 @@
-import os.lock
 import SynchronizationKit
 
 extension AsyncSequence where Self: Sendable, Self.Element: Sendable {
