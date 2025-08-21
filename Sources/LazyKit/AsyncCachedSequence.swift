@@ -1,23 +1,36 @@
 import SynchronizationKit
 
 extension AsyncSequence where Self: Sendable, Self.Element: Sendable {
+    /// Returns an asynchronous sequence that caches the elements of this sequence.
+    ///
+    /// The first time the cached sequence is iterated, it will iterate the base sequence and store the elements.
+    /// Subsequent iterations will return the cached elements.
+    /// - Returns: An `AsyncCachedSequence` that wraps this sequence.
     public func cached() -> AsyncCachedSequence<Self> {
         AsyncCachedSequence<Self>(self)
     }
 }
 
-
+/// An asynchronous sequence that caches the elements of a base asynchronous sequence.
+///
+/// The `AsyncCachedSequence` is useful when you have an asynchronous sequence that is expensive to compute
+/// and you want to iterate over it multiple times. The first iteration will compute and cache the elements,
+/// and subsequent iterations will read from the cache.
 public struct AsyncCachedSequence<Base: AsyncSequence & Sendable>: Sendable, AsyncSequence where Base.Element: Sendable {
+    /// The type of element produced by this asynchronous sequence.
     public typealias Element = Base.Element
 
     private let storage: CachedStorage<Base>
 
+    /// Creates a new `AsyncCachedSequence` that wraps the given asynchronous sequence.
+    /// - Parameter asyncSequence: The asynchronous sequence to wrap.
     public init(
         _ asyncSequence: Base
     ) {
         self.storage = CachedStorage(producer: asyncSequence)
     }
 
+    /// Creates an asynchronous iterator that produces elements of this sequence.
     public func makeAsyncIterator() -> Iterator {
         Iterator(storage: storage)
     }
@@ -25,6 +38,7 @@ public struct AsyncCachedSequence<Base: AsyncSequence & Sendable>: Sendable, Asy
 
 extension AsyncCachedSequence {
 
+    /// The iterator for an `AsyncCachedSequence`.
     public struct Iterator: AsyncIteratorProtocol {
         fileprivate let storage: CachedStorage<Base>
         fileprivate var idx: Int
@@ -34,6 +48,7 @@ extension AsyncCachedSequence {
             self.idx = 0
         }
 
+        /// Asynchronously advances to the next element and returns it, or `nil` if no next element exists.
         public mutating func next() async throws -> Element? {
             let elem = try await storage.next(idx: idx)
             idx = idx + 1

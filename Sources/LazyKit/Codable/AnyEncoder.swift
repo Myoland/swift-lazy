@@ -7,10 +7,22 @@
 
 import Foundation
 
+/// An encoder that can encode `Encodable` types to an `Any` value.
+///
+/// This encoder is useful when you want to encode an `Encodable` type into a Swift dictionary or array
+/// without first converting it to `Data`.
 public final class AnyEncoder: Sendable {
         
+    /// Initializes a new `AnyEncoder`.
     public init() {}
     
+    /// Encodes a top-level value of the given type to an `Any` value.
+    ///
+    /// - Parameters:
+    ///   - value: The value to encode.
+    ///   - userInfo: A dictionary to customize the encoding process.
+    /// - Returns: An `Any` value representing the encoded object.
+    /// - Throws: An error if encoding fails.
     public func encode<T>(
         _ value: T,
         userInfo: [CodingUserInfoKey: Any] = [:]
@@ -19,6 +31,13 @@ public final class AnyEncoder: Sendable {
         fatalError("Unsupported")
     }
     
+    /// Encodes a top-level value of the given type to an `Any` value.
+    ///
+    /// - Parameters:
+    ///   - value: The value to encode.
+    ///   - userInfo: A dictionary to customize the encoding process.
+    /// - Returns: An `Any` value representing the encoded object.
+    /// - Throws: An error if encoding fails.
     public func encode<T: Encodable>(
         _ value: T,
         userInfo: [CodingUserInfoKey: Any] = [:]
@@ -28,6 +47,13 @@ public final class AnyEncoder: Sendable {
         return encoder.node
     }
     
+    /// Encodes a top-level value of the given type to a `Sendable` `Any` value.
+    ///
+    /// - Parameters:
+    ///   - value: The value to encode.
+    ///   - userInfo: A dictionary to customize the encoding process.
+    /// - Returns: A `Sendable` `Any` value representing the encoded object.
+    /// - Throws: An error if encoding fails.
     public func encode<T: Encodable & Sendable>(
         _ value: T,
         userInfo: [CodingUserInfoKey: Any] = [:]
@@ -272,4 +298,3 @@ private struct _UnkeyedEncodingContainer: UnkeyedEncodingContainer {
     
     private var currentEncoder: _Encoder { return encoder.encoder(for: _CodingKey(index: count)) }
 }
-

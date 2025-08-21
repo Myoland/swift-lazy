@@ -1,5 +1,5 @@
 {
-  "originHash" : "dd6e76b50e7b239c5a9e23a4ac2811e3a41443c174ba9f6574f453784ad1e9dc",
+  "originHash" : "2fea1d366bd176cf81b68136357e8c75f8f1248ae65924ef30b0838f57dff586",
   "pins" : [
     {
       "identity" : "swift-algorithms",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AFutureD/swift-synchronization",
       "state" : {
-        "branch" : "main",
-        "revision" : "2796e5cc569acd8774468ab45bb294ba41028d30"
+        "revision" : "5995386326f11f1eeb4848171c709e75077a389b",
+        "version" : "0.1.0"
       }
     }
   ],

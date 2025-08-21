@@ -2,8 +2,15 @@ import SwiftDotenv
 import Foundation
 
 extension Dotenv {
-    /// NOTICE: If you run tests in Xcode, MUST run tests on executable, and Working Directory in scheme,
-    ///         or FileMananger will inital `currentDirectoryPath` correctly.
+    /// Configures `SwiftDotenv` to load the appropriate `.env` file.
+    ///
+    /// This function checks if the process is running in a testing environment.
+    /// If it is, it loads `.env.test`. Otherwise, it loads the default `.env` file.
+    ///
+    /// - Important: When running tests in Xcode, you must ensure that the working directory is set correctly in your scheme's settings.
+    ///   This is necessary for `FileManager` to correctly determine the `currentDirectoryPath`.
+    ///
+    /// - Throws: An error if the `.env` file cannot be found or loaded.
     public static func make() throws {
         if ProcessInfo.processInfo.isTesting {
             try self.configure(atPath: ".env.test")

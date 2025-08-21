@@ -7,11 +7,26 @@
 
 import Foundation
 
-/// https://github.com/swiftlang/swift-foundation/blob/main/Sources/FoundationEssentials/JSON/JSONDecoder.swift
+/// A decoder that can decode `Decodable` types from an `Any` value.
+///
+/// This decoder is useful when you have data in the form of a Swift dictionary or array
+/// and you want to decode it into a `Decodable` type without first converting it to `Data`.
+///
+/// The implementation is inspired by the `JSONDecoder` from the Swift Foundation library.
+/// See: [swift-foundation/JSONDecoder.swift](https://github.com/swiftlang/swift-foundation/blob/main/Sources/FoundationEssentials/JSON/JSONDecoder.swift)
 final public class AnyDecoder: Sendable {
     
+    /// Initializes a new `AnyDecoder`.
     public init() {}
     
+    /// Decodes a top-level value of the given type from the given `Any` value.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the value to decode.
+    ///   - dictionary: The `Any` value to decode from. This should be a dictionary or array.
+    ///   - userInfo: A dictionary to customize the decoding process.
+    /// - Returns: A value of the requested type.
+    /// - Throws: An error if decoding fails.
     public func decode<T>(
         _ type: T.Type = T.self,
         from dictionary: Any,

@@ -6,21 +6,40 @@
 //
 // MARK: - DefaultValue
 
-/// Protocol that defines a type that provides a default value.
-/// Used with the `Default` property wrapper to provide default values for Codable properties.
+/// A protocol that defines a type that provides a default value.
+///
+/// Conforming to `DefaultValue` allows a type to be used with the `@Default` property wrapper,
+/// which provides a fallback value when a property is not present during `Codable` decoding.
+///
+/// ```swift
+/// enum MyDefault: DefaultValue {
+///     static let defaultValue = "N/A"
+/// }
+///
+/// struct MyModel: Codable {
+///     @Default<MyDefault> var name: String
+/// }
+/// ```
 public protocol DefaultValue {
+    /// The type of the default value.
     associatedtype Value
+    /// The default value for the conforming type.
     static var defaultValue: Value { get }
 }
 
 // MARK: - Default
 
-/// A property wrapper that provides a default value for Codable properties.
-/// When decoding, if the key is missing or the value is null, the default value will be used.
+/// A property wrapper that provides a default value for `Codable` properties.
+///
+/// When decoding, if the key for a `@Default` wrapped property is missing or the value is `null`,
+/// the `defaultValue` from the `DefaultValue` provider will be used instead.
 @propertyWrapper
 public struct Default<T: DefaultValue> {
+    /// The underlying value of the wrapped property.
     public var wrappedValue: T.Value
     
+    /// Initializes the property wrapper with a default value.
+    /// - Parameter wrappedValue: The initial value of the property. If not provided, the default value from the provider is used.
     public init(wrappedValue: T.Value = T.defaultValue) {
         self.wrappedValue = wrappedValue
     }

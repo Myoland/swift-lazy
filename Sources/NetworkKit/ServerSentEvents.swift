@@ -25,27 +25,36 @@ enum ASCII {
     static let space: UInt8 = 0x20
 }
 
+/// A structure representing a Server-Sent Event.
 public struct ServerSentEvent: Sendable {
+    /// The event's ID.
     public let id: String?
+    /// The event's type.
     public let event: String
+    /// The event's data.
     public let data: String
+    /// The reconnection time for the event stream.
     public let retry: Int?
 }
 
 public extension ServerSentEvent {
+    /// The MIME type for Server-Sent Events.
     static let MIME_String: String = "text/event-stream"
     
+    /// The character encoding for Server-Sent Events.
     static let encoding: String.Encoding = .utf8
 }
 
 
 
-/// A Interpreter for processing server-sent-events
+/// An interpreter for processing Server-Sent Events (SSE).
 ///
-/// The Interpreter will process as [specification](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation) descried.
+/// This class processes a stream of `Data` and interprets it as a sequence of `ServerSentEvent` objects
+/// according to the [W3C specification](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation).
 public final class ServerSentEventsInterpreter: Sendable {
 
     private let clientLastEventId: LazyLockedValue<String?> = .init(nil)
+    /// A logger for the interpreter.
     public let logger: Logger = .init(label: "me.afuture.server.sse")
 
     private let fields: LazyLockedValue<[String: String]> = .init([:])
@@ -54,6 +63,10 @@ public final class ServerSentEventsInterpreter: Sendable {
     
     private let cachedChunk: LazyLockedValue<[UInt8]> = .init([])
     
+    /// Processes a `Data` buffer and returns an array of `ServerSentEvent` objects.
+    ///
+    /// - Parameter buffer: The `Data` buffer to process.
+    /// - Returns: An array of `ServerSentEvent` objects parsed from the buffer.
     public func process(buffer: Data) -> [ServerSentEvent] {
         let bytes = [UInt8](buffer)
         
@@ -201,13 +214,20 @@ extension ServerSentEventsInterpreter {
 
 // Rewrite using state machine.
 // The current implement is for convenience.
+/// An `AsyncSequence` that interprets a stream of `Data` as Server-Sent Events.
 public final class AsyncServerSentEventsInterpreter: AsyncSequence, Sendable {
+    /// The element type of the sequence, which is `ServerSentEvent`.
+    public typealias Element = ServerSentEvent
 
     let stream: AnyAsyncSequence<Data>
+    
+    /// Initializes a new `AsyncServerSentEventsInterpreter` with the given stream of `Data`.
+    /// - Parameter stream: The stream of `Data` to interpret.
     public init(stream: AnyAsyncSequence<Data>) {
         self.stream = stream
     }
 
+    /// Creates an asynchronous iterator that produces elements of this sequence.
     public func makeAsyncIterator() -> AnyAsyncSequence<ServerSentEvent>.AsyncIterator {
         let interpreter = ServerSentEventsInterpreter()
         return stream.map {
@@ -217,6 +237,8 @@ public final class AsyncServerSentEventsInterpreter: AsyncSequence, Sendable {
 }
 
 extension AsyncSequence where Self: Sendable, Self.Element == Data {
+    /// Maps an asynchronous sequence of `Data` to an asynchronous sequence of `ServerSentEvent`.
+    /// - Returns: An `AsyncServerSentEventsInterpreter` that interprets the `Data` stream.
     public func mapToServerSentEvert() -> AsyncServerSentEventsInterpreter {
         AsyncServerSentEventsInterpreter(stream: .init(self))
     }
